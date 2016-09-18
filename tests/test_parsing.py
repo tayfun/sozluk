@@ -3,10 +3,10 @@ import scrapers
 
 
 def test_saksafon(mocker):
-    mock_get_webpage = mocker.patch('scrapers.get_webpage')
+    mock_get_url = mocker.patch('scrapers.get_url')
     with open('./tests/responses/saksafon.html', 'r') as response_file:
         content = response_file.read()
-    mock_get_webpage.return_value = content
+    mock_get_url.return_value = content
     entry = scrapers.scrape_meaning('saksafon')
     assert entry['sources'] == [{
         'tags': ['isim', u'Frans\u0131zca saxophone', u'm\xfczik'],
@@ -24,10 +24,10 @@ def test_saksafon(mocker):
 
 
 def test_hercai_menekse(mocker):
-    mock_get_webpage = mocker.patch('scrapers.get_webpage')
+    mock_get_url = mocker.patch('scrapers.get_url')
     with open(u'./tests/responses/hercai menekşe.html', 'r') as response_file:
         content = response_file.read()
-    mock_get_webpage.return_value = content
+    mock_get_url.return_value = content
     entry = scrapers.scrape_meaning(u'hercai menekşe')
     assert entry['entry'] == u'hercai menekşe'
     assert entry['sources'] == [{
@@ -49,16 +49,20 @@ def test_hercai_menekse(mocker):
 
 
 def test_her(mocker):
-    mock_get_webpage = mocker.patch('scrapers.get_webpage')
+    mock_get_url = mocker.patch('scrapers.get_url')
     with open(u'./tests/responses/her.html', 'r') as response_file:
         content = response_file.read()
-    mock_get_webpage.return_value = content
+    mock_get_url.return_value = content
     entry = scrapers.scrape_meaning('her')
     assert entry['entry'] == 'her'
     assert entry['sources'] == [{
         'tags': [u'sıfat', u'Farsça her'],
         'definitions': [{
-            'meaning': u'Önüne geldiği ismin benzerlerini "teker teker hepsi, birer birer hepsi, birer birer tamamı" anlamıyla kapsayacak biçimde genelleştiren söz',
+            'meaning': (
+                u'Önüne geldiği ismin benzerlerini "teker teker hepsi, '
+                u'birer birer hepsi, birer birer tamamı" anlamıyla '
+                u'kapsayacak biçimde genelleştiren söz'
+            ),
             'example': {
                 'sentence': u'Bir hafta, her gece çalışmak suretiyle hikâyesini bitirdi.',  # NOQA
                 'author': u'H. E. Adıvar',
@@ -126,10 +130,10 @@ def test_her(mocker):
 
 
 def test_mey(mocker):
-    mock_get_webpage = mocker.patch('scrapers.get_webpage')
+    mock_get_url = mocker.patch('scrapers.get_url')
     with open(u'./tests/responses/mey.html', 'r') as response_file:
         content = response_file.read()
-    mock_get_webpage.return_value = content
+    mock_get_url.return_value = content
     entry = scrapers.scrape_meaning(u'mey')
     assert entry['entry'] == u'mey'
     assert entry['sources'] == [{
@@ -141,7 +145,8 @@ def test_mey(mocker):
         }]}, {
         'tags': ['isim', u'müzik'],
         'definitions': [{
-            'meaning': u'Türk halk müziğinde kullanılan, ağzı yassı bir zurna türü',
+            'meaning':
+                u'Türk halk müziğinde kullanılan, ağzı yassı bir zurna türü',
             'example': {},
             'tags': ['isim', u'müzik'],
         }]
@@ -154,30 +159,40 @@ def test_mey(mocker):
 
 
 def test_ufuk(mocker):
-    mock_get_webpage = mocker.patch('scrapers.get_webpage')
+    mock_get_url = mocker.patch('scrapers.get_url')
     with open(u'./tests/responses/ufuk.html', 'r') as response_file:
         content = response_file.read()
-    mock_get_webpage.return_value = content
+    mock_get_url.return_value = content
     entry = scrapers.scrape_meaning(u'ufuk')
     assert entry['entry'] == u'ufuk'
     assert entry['sources'] == [{
-        'tags': ['isim', u'Arapça ufḳ',],
+        'tags': ['isim', u'Arapça ufḳ'],
         'definitions': [{
-            'tags': ['isim',],
-            'meaning': u'Düz arazide veya açık denizde gökle yerin birleşir gibi göründüğü yer, çevren',
+            'tags': ['isim'],
+            'meaning': (
+                u'Düz arazide veya açık denizde gökle yerin '
+                u'birleşir gibi göründüğü yer, çevren'
+            ),
             'example': {
-                'sentence': u'Geniş çöl ufukları arasında çadırlarımızı kurduk.',
+                'sentence':
+                    u'Geniş çöl ufukları arasında çadırlarımızı kurduk.',
                 'author': 'F. R. Atay'
             }
         }, {
             'tags': [u'coğrafya'],
-            'meaning': u'Çekülün gösterdiği dikey çizgi ile gözlemci üzerinden geçen düzlem, göz erimi',
+            'meaning': (
+                u'Çekülün gösterdiği dikey çizgi ile gözlemci '
+                u'üzerinden geçen düzlem, göz erimi'
+            ),
             'example': {}
         }, {
             'tags': [],
             'meaning': u'Anlayış, kavrayış, görüş, düşünce gücü, ihata',
             'example': {
-                'sentence': u'Bu dar zihinlerde, ufku genişlememiş dimağlarda, zaruri olarak faziletler de dardı.',
+                'sentence': (
+                    u'Bu dar zihinlerde, ufku genişlememiş dimağlarda, '
+                    u'zaruri olarak faziletler de dardı.'
+                ),
                 'author': u'Ö. Seyfettin'
             }
         }, {
@@ -191,3 +206,126 @@ def test_ufuk(mocker):
         'idioms': ['ufku daralmak', u'ufkunu genişletmek'],
         'compound_entries': [u'ufuk çizgisi', 'ufku dar', u'ufku geniş']
     }
+
+
+def test_first_page_letter_f(mocker):
+    mock_get_url = mocker.patch('scrapers.get_url')
+    with open(u'./tests/responses/f_first.html', 'r') as response_file:
+        content = response_file.read()
+    mock_get_url.return_value = content
+    words, next_page = scrapers.get_words_and_links(
+        'http://tdk.org.tr/index.php?option=com_yazimkilavuzu&arama=kelime'
+        '&kelime=f&kategori=yazim_listeli&ayn=bas')
+    assert words == set(
+        entry.strip() for entry in
+        u"""f
+        fa
+        faal
+        faaliyet
+        faallik
+        fa anahtarı
+        fabl
+        fabrika
+        fabrikacı
+        fabrikacılık
+        fabrikasyon
+        fabrikatör
+        fabrikatörlük
+        facia
+        facialaşma
+        facialaşmak
+        facialaştırma
+        facialaştırmak
+        facialı
+        faça
+        façalı
+        façeta
+        façetalı
+        façetasız
+        façuna
+        façunalık
+        fagosit
+        fagositoz
+        fagot
+        fağfur
+        fağfuri
+        fahiş
+        fahişe
+        fahişelik
+        fahişlik
+        fahrenhayt
+        fahri
+        fahri konsolos
+        fahrilik
+        fahriye
+        fahte
+        fahur
+        faik
+        faikiyet
+        faiklik
+        fail
+        faili meçhul
+        failimuhtar
+        faillik
+        faiz
+        faizci
+        faizcilik
+        faiz fiyatı
+        faiz haddi
+        faizlendirme
+        faizlendirmek
+        faizli
+        faiz oranı
+        faizsiz""".split('\n')
+    )
+    assert next_page == (
+        'http://tdk.org.tr/index.php?option=com_yazimkilavuzu'
+        '&view=yazimkilavuzu&kategori1=yazim_listeli&ayn1=bas'
+        '&kelime1=f&sayfa1=60'
+    )
+
+
+def test_last_page_letter_f(mocker):
+    mock_get_url = mocker.patch('scrapers.get_url')
+    with open(u'./tests/responses/f_last.html', 'r') as response_file:
+        content = response_file.read()
+    mock_get_url.return_value = content
+    words, next_page = scrapers.get_words_and_links(
+        'http://tdk.org.tr/index.php?option=com_yazimkilavuzu&'
+        'view=yazimkilavuzu&kategori1=yazim_listeli&ayn1=bas'
+        '&kelime1=f&sayfa1=1560')
+    assert words == set(
+        entry.strip() for entry in
+        u"""fümerol
+        füniküler
+        fünye
+        fürs
+        füru
+        fürumaye
+        füsun
+        füsunkâr
+        füsunlu
+        fütuhat
+        fütuhatçı
+        fütuhatçılık
+        fütur
+        fütursuz
+        fütursuzca
+        fütursuzcasına
+        fütursuzluk
+        fütürist
+        fütüristlik
+        fütürizm
+        fütürolog
+        fütüroloji
+        fütürolojik
+        fütüvvet
+        füze
+        füzeatar
+        füzeci
+        füzen
+        füzesavar
+        füzyometre
+        füzyon""".split('\n')
+    )
+    assert next_page is None

@@ -11,49 +11,66 @@ from encoding import normalize
 
 DICTIONARY_URL = \
     u'http://www.tdk.org.tr/index.php?option=com_gts&arama=gts&kelime={}'
+DOMAIN = 'http://tdk.org.tr'
 # Tag delimiters could be a comma or a double space characters.
 TAG_DEL = re.compile(r'\s\s+|,\s+')
 MEANING_START = re.compile("^\s*(\d*\.)?\s*")
 MEANING_END = re.compile(r"[-\"'\s]*$")
 
 
-def get_tags(elements):
+def get_tags(tag_list):
     tags = set()
-    for tag_text in elements:
+    for tag_text in tag_list:
         for tag in TAG_DEL.split(tag_text):
             tags.add(tag.strip())
-    # Remove empty tags (both None and empty strings).
+    # Remove empty tags (both None and empty strings are removed).
     tags = filter(None, tags)
     return tags
 
 
-def get_webpage(entry):
-    """Cached for testing only."""
-    """
-This works:
-'http://www.tdk.org.tr/index.php?option=com_gts&arama=gts&kelime=hercai%20menek%C5%9Fe'
+def get_url(url):
+    """Return page from cache, retry on error."""
+    page_content = None
+    for i in range(5):
+        try:
+            page_content = requests.get(url).content
+            break
+        except RequestException:
+            if (i == 4):
+                raise
+            # Try again after waiting for a bit.
+            sleep(10)
+    return page_content
 
-But encoding Turkish characters normally does not:
-ipdb> response  = requests.get(DICTIONARY_URL + '&kelime=hercai+meneks%CC%A7e')
 
+def get_meaning_page(entry):
     """
-    if not getattr(get_webpage, '__cache__', None):
-        get_webpage.__cache__ = {}
-    page_from_cache = get_webpage.__cache__.get(entry)
+    Return the meaning page for an entry.
+
+    This works:
+    http://www.tdk.org.tr/index.php?option=com_gts&arama=gts&
+    kelime=hercai%20menek%C5%9Fe
+
+    But encoding Turkish characters normally does not:
+    response  = requests.get(DICTIONARY_URL + '&kelime=hercai+meneks%CC%A7e')
+
+    ie.
+
+    Url encoding automatically done by requests is not 'liked' by the
+    incompetent server of TDK.
+
+    page_from_cache = requests.post(DICTIONARY_URL, data={
+        'kelime': entry
+    }).content
+
+    Above returns a 404 page for entries having Turkish characters.
+    """
+    if not getattr(get_meaning_page, '__cache__', None):
+        get_meaning_page.__cache__ = {}
+    page_from_cache = get_meaning_page.__cache__.get(entry)
     if page_from_cache is None:
-        # urlencoding automatically done by requests is not 'liked' by the
-        # incompetent server of TDK.
-        # page_from_cache = requests.post(DICTIONARY_URL, data={
-        #     'kelime': entry
-        # }).content
-        for i in range(5):
-            try:
-                page_from_cache = requests.get(DICTIONARY_URL.format(entry)).content
-                break
-            except RequestException:
-                # Try again.
-                sleep(10)
-        get_webpage.__cache__[entry] = page_from_cache
+        page_from_cache = get_url(DICTIONARY_URL.format(entry))
+        get_meaning_page.__cache__[entry] = page_from_cache
     return page_from_cache
 
 
@@ -65,6 +82,9 @@ def scrape_meaning(entry_string):
         http://www.tdk.org.tr/index.php?option=com_gts&arama=gts&kelime=sak
 
     It has two different meanings, and also it is referenced in the idioms
+    dictionary.
+
+    Also check out the tests to understand the structure of the returned
     dictionary.
     """
     now = datetime.now().isoformat()
@@ -79,7 +99,7 @@ def scrape_meaning(entry_string):
         },
         'sources': [],
     }
-    page = get_webpage(entry_string)
+    page = get_meaning_page(entry_string)
     tree = html.fromstring(page)
     definition_tables = tree.xpath('//*[@id="hor-minimalist-a"]')
     for definition_el in definition_tables:
@@ -87,31 +107,31 @@ def scrape_meaning(entry_string):
             'tags': [],
             'definitions': []
         }
-        tag_elements = definition_el.xpath("thead/tr/th/i//text()")
-        source['tags'] = get_tags(tag_elements)
-        for meaning_tr in definition_el.xpath('tr'):
+        tag_list = definition_el.xpath("./thead/tr/th/i//text()")
+        source['tags'] = get_tags(tag_list)
+        for meaning_tr in definition_el.xpath('./tr'):
             definition = {
                 'meaning': '',
                 'tags': set(),
                 'example': {},
             }
-            meaning = "".join(meaning_tr.xpath('td/text()'))
+            meaning = "".join(meaning_tr.xpath('./td/text()'))
             meaning = MEANING_START.sub('', meaning)
             meaning = MEANING_END.sub('', meaning)
             definition['meaning'] = meaning
-            for index, i_element in enumerate(meaning_tr.xpath('td/i')):
+            for index, i_element in enumerate(meaning_tr.xpath('./td/i')):
                 # The first <i> element is the type (sifat, isim etc.) and it
                 # exists even if it is empty.
                 # The second is the example sentence. And bold is the author.
                 if index == 0:
-                    tags = get_tags(i_element.xpath('text()'))
+                    tags = get_tags(i_element.xpath('./text()'))
                     definition['tags'] = tags
                     continue
                 example_text = ''.join(i_element.xpath('text()')).strip()
                 if example_text:
                     try:
                         author = ''.join(
-                            meaning_tr.xpath('td/b')[-1].xpath('text()'))
+                            meaning_tr.xpath('./td/b')[-1].xpath('text()'))
                         author = author.strip()
                     except IndexError:
                         author = None
@@ -123,22 +143,44 @@ def scrape_meaning(entry_string):
         entry['sources'].append(source)
     other_dictionary_tables = tree.xpath('//*[@id="hor-minimalist-b"]')
     for other_dictionary in other_dictionary_tables:
-        title = ''.join(other_dictionary.xpath('thead//text()'))
+        title = ''.join(other_dictionary.xpath('./thead//text()'))
         if 'deyim' in title:
             other_topic = 'idioms'
         else:
             other_topic = 'compound_entries'
-        related_entry_list = other_dictionary.xpath('tbody/tr/td/a/text()')
+        related_entry_list = other_dictionary.xpath('./tbody/tr/td/a/text()')
         for related_entry in related_entry_list:
             entry['related_entries'][other_topic].append(
                 related_entry.strip())
-    from pprint import pprint
-    pprint(entry)
     return entry
 
 
-def print_meaning(entry_string):
-    entry = scrape_meaning(entry_string)
-    from pprint import pprint
-    pprint(entry)
+def get_words_and_links(url):
+    """
+    Returns the entries found on the page and the links for more.
 
+    The URLs are of pattern:
+        http://tdk.org.tr/index.php?option=com_yazimkilavuzu&arama=kelime&kelime=a&kategori=yazim_listeli&ayn=bas
+    """
+    entry_list_page = get_url(url)
+    tree = html.fromstring(entry_list_page)
+    next_page = None
+    word_set = set()
+    rows = tree.xpath('//td')
+    # The first 5 tds are the search boxes and next page buttons.
+    # The last two td's are an empty one and the menu.
+    keyword_tds = rows[6:-2]
+    for td in keyword_tds:
+        keyword = td.text_content()
+        keyword = keyword.split(",")[0].split("/")[0].split("(")[0]
+        keyword = keyword.strip().lower()
+        word_set.add(keyword)
+
+    if keyword_tds:
+        next_page = rows[5].findall('.//a')[1].get('href')
+        next_page = DOMAIN + next_page
+        # Last page also has a link to current page as "next page".
+        if url == next_page:
+            next_page = None
+
+    return (word_set, next_page)
