@@ -208,17 +208,46 @@ def test_ufuk(mocker):
     }
 
 
+def test_Ir(mocker):
+    mock_get_url = mocker.patch('scrapers.get_url')
+    with open(u'./tests/responses/Ir.html', 'r') as response_file:
+        content = response_file.read()
+    mock_get_url.return_value = content
+    entry = scrapers.scrape_meaning(u'Ir')
+    assert entry['entry'] == u'Ir'
+    assert entry['norm'] == u'ir'
+    assert entry['sources'] == [{
+        'tags': ['kimya'],
+        'definitions': [{
+            'tags': ['kimya'],
+            'meaning': u'İridyum elementinin simgesi',
+            'example': {}
+        }]}, {
+        'tags': ['isim'],
+        'definitions': [{
+            'tags': [u'bakınız'],
+            'meaning': u'bakınız yır',
+            'example': {}
+        }]
+    }]
+    assert entry['related_entries'] == {
+        'idioms': [],
+        'compound_entries': []
+    }
+
+
 def test_first_page_letter_f(mocker):
     mock_get_url = mocker.patch('scrapers.get_url')
     with open(u'./tests/responses/f_first.html', 'r') as response_file:
         content = response_file.read()
     mock_get_url.return_value = content
-    words, next_page = scrapers.get_words_and_links(
+    words, next_page = scrapers.get_entries_and_next_page(
         'http://tdk.org.tr/index.php?option=com_yazimkilavuzu&arama=kelime'
         '&kelime=f&kategori=yazim_listeli&ayn=bas')
     assert words == set(
         entry.strip() for entry in
-        u"""f
+        u"""F
+        f
         fa
         faal
         faaliyet
@@ -290,7 +319,7 @@ def test_last_page_letter_f(mocker):
     with open(u'./tests/responses/f_last.html', 'r') as response_file:
         content = response_file.read()
     mock_get_url.return_value = content
-    words, next_page = scrapers.get_words_and_links(
+    words, next_page = scrapers.get_entries_and_next_page(
         'http://tdk.org.tr/index.php?option=com_yazimkilavuzu&'
         'view=yazimkilavuzu&kategori1=yazim_listeli&ayn1=bas'
         '&kelime1=f&sayfa1=1560')
@@ -299,7 +328,7 @@ def test_last_page_letter_f(mocker):
         u"""fümerol
         füniküler
         fünye
-        fürs
+        Fürs
         füru
         fürumaye
         füsun

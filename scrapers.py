@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 from datetime import datetime
 import re
 from time import sleep
@@ -87,6 +88,11 @@ def scrape_meaning(entry_string):
     Also check out the tests to understand the structure of the returned
     dictionary.
     """
+    # If starting with a paranthesis, remove it. Example entry: (bir yeri)
+    # ırgat pazarına döndürmek & URL:
+    # http://tdk.org.tr/index.php?option=com_gts&arama=gts&kelime=%C4%B1rgat%20pazar%C4%B1na%20d%C3%B6nd%C3%BCrmek
+    if entry_string[0] == '(' and ')' in entry_string:
+        entry_string = entry_string.split(')')[1].strip()
     now = datetime.now().isoformat()
     entry = {
         'entry': entry_string,
@@ -102,14 +108,14 @@ def scrape_meaning(entry_string):
     page = get_meaning_page(entry_string)
     tree = html.fromstring(page)
     definition_tables = tree.xpath('//*[@id="hor-minimalist-a"]')
-    for definition_el in definition_tables:
+    for definition_table in definition_tables:
         source = {
             'tags': [],
             'definitions': []
         }
-        tag_list = definition_el.xpath("./thead/tr/th/i//text()")
+        tag_list = definition_table.xpath("./thead/tr/th/i//text()")
         source['tags'] = get_tags(tag_list)
-        for meaning_tr in definition_el.xpath('./tr'):
+        for meaning_tr in definition_table.xpath('./tr'):
             definition = {
                 'meaning': '',
                 'tags': set(),
@@ -118,6 +124,12 @@ def scrape_meaning(entry_string):
             meaning = "".join(meaning_tr.xpath('./td/text()'))
             meaning = MEANING_START.sub('', meaning)
             meaning = MEANING_END.sub('', meaning)
+            if not meaning:
+                # Yeah, some definitions are in a link inside td and we get
+                # nothing for this reason. ex. Ir
+                meaning = meaning_tr.text_content()
+                meaning = MEANING_START.sub('', meaning)
+                meaning = MEANING_END.sub('', meaning)
             definition['meaning'] = meaning
             for index, i_element in enumerate(meaning_tr.xpath('./td/i')):
                 # The first <i> element is the type (sifat, isim etc.) and it
@@ -155,7 +167,7 @@ def scrape_meaning(entry_string):
     return entry
 
 
-def get_words_and_links(url):
+def get_entries_and_next_page(url):
     """
     Returns the entries found on the page and the links for more.
 
@@ -165,7 +177,7 @@ def get_words_and_links(url):
     entry_list_page = get_url(url)
     tree = html.fromstring(entry_list_page)
     next_page = None
-    word_set = set()
+    entry_set = set()
     rows = tree.xpath('//td')
     # The first 5 tds are the search boxes and next page buttons.
     # The last two td's are an empty one and the menu.
@@ -173,14 +185,19 @@ def get_words_and_links(url):
     for td in keyword_tds:
         keyword = td.text_content()
         keyword = keyword.split(",")[0].split("/")[0].split("(")[0]
-        keyword = keyword.strip().lower()
-        word_set.add(keyword)
+        # Don't lowercase here, because it introduces a bug where I becomes i
+        # (dotless i becomes i) ex. Irak (the country)
+        keyword = keyword.strip()
+        entry_set.add(keyword)
 
     if keyword_tds:
-        next_page = rows[5].findall('.//a')[1].get('href')
-        next_page = DOMAIN + next_page
+        try:
+            next_page = rows[5].findall('.//a')[1].get('href')
+            next_page = DOMAIN + next_page
+        except IndexError:
+            next_page = None
         # Last page also has a link to current page as "next page".
         if url == next_page:
             next_page = None
 
-    return (word_set, next_page)
+    return (entry_set, next_page)

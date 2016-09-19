@@ -58,3 +58,10 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# boto3 needs to be in top level because the AWS Lambda supplied boto is old.
+boto3/
+# main.zip file for uploading the lambda functions.
+main.zip
+# requests library to be packaged for AWS Lambda execution environment.
+requests/
