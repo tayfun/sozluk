@@ -34,7 +34,9 @@ def get_url(url):
     page_content = None
     for i in range(5):
         try:
-            page_content = requests.get(url).content
+            response = requests.get(url)
+            response.raise_for_status()
+            page_content = response.content
             break
         except RequestException:
             if (i == 4):
