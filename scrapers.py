@@ -17,6 +17,16 @@ DOMAIN = 'http://tdk.org.tr'
 TAG_DEL = re.compile(r'\s\s+|,\s+')
 MEANING_START = re.compile("^\s*(\d*\.)?\s*")
 MEANING_END = re.compile(r"[-\"'\s]*$")
+"""
+If an entry starts with paranthesis, remove everything between because TDK
+does not allow a search like that. Ex. (birinin) şapkasını giymek (veya
+taşımak) becomes "sapkasini giymek (veya tasimak)"
+"""
+STARTS_WITH_PARANTHESIS = re.compile(r"^\([^)]*\)\s*")
+
+# TODO: For debugging only, comment when not needed.
+import logging  # NOQA
+logger = logging.getLogger()
 
 
 def get_tags(tag_list):
@@ -93,8 +103,7 @@ def scrape_meaning(entry_string):
     # If starting with a paranthesis, remove it. Example entry: (bir yeri)
     # ırgat pazarına döndürmek & URL:
     # http://tdk.org.tr/index.php?option=com_gts&arama=gts&kelime=%C4%B1rgat%20pazar%C4%B1na%20d%C3%B6nd%C3%BCrmek
-    if entry_string[0] == '(' and ')' in entry_string:
-        entry_string = entry_string.split(')')[1].strip()
+    entry_string = STARTS_WITH_PARANTHESIS.sub('', entry_string)
     now = datetime.now().isoformat()
     entry = {
         'entry': entry_string,
@@ -110,6 +119,10 @@ def scrape_meaning(entry_string):
     page = get_meaning_page(entry_string)
     tree = html.fromstring(page)
     definition_tables = tree.xpath('//*[@id="hor-minimalist-a"]')
+    # Something fishy going on.
+    if not definition_tables:
+        logger.error('WTF')
+        logger.error(page)
     for definition_table in definition_tables:
         source = {
             'tags': [],
@@ -192,6 +205,10 @@ def get_entries_and_next_page(url):
         keyword = keyword.strip()
         entry_set.add(keyword)
 
+    if not entry_set:
+        # This page is weird, it has no entries or next pages in it.
+        logger.error('WTF')
+        logger.error(entry_list_page)
     if keyword_tds:
         try:
             next_page = rows[5].findall('.//a')[1].get('href')

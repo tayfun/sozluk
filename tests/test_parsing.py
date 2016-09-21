@@ -358,3 +358,26 @@ def test_last_page_letter_f(mocker):
         füzyon""".split('\n')
     )
     assert next_page is None
+
+
+def test_birinin_sapkasini_with_paranthesis(mocker):
+    """Test an entry that starts with paranthesis."""
+    mock_get_url = mocker.patch('scrapers.get_url')
+    with open('./tests/responses/şapkasını giymek (veya taşımak).html',
+              'r') as response_file:
+        content = response_file.read()
+    mock_get_url.return_value = content
+    entry = scrapers.scrape_meaning(u'(birinin) şapkasını giymek (veya taşımak)')
+    assert entry['sources'] == [{
+        'tags': [],
+        'definitions': [{
+            'meaning': u'kendi kimliğinin veya düşüncelerinin dışında başka birinin kimliğini geçici olarak taşımak veya onun düşünceleriyle ortaya çıkmak',  # NOQA
+            'example': {
+                'author': None,
+                'sentence': u"T\xfcrkler ba\u015fl\u0131k olarak 1925'te \u015fapkay\u0131 kabul ettiler."  # NOQA
+            },
+            'tags': []
+        }]
+    }]
+    assert entry['entry'] == u'şapkasını giymek (veya taşımak)'
+    assert entry['norm'] == 'sapkasini giymek (veya tasimak)'
