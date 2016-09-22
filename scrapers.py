@@ -1,4 +1,6 @@
 # -*- coding: utf8 -*-
+from __future__ import print_function
+from __future__ import unicode_literals
 from datetime import datetime
 import re
 from time import sleep
@@ -11,7 +13,7 @@ from encoding import normalize
 
 
 DICTIONARY_URL = \
-    u'http://www.tdk.org.tr/index.php?option=com_gts&arama=gts&kelime={}'
+    'http://www.tdk.org.tr/index.php?option=com_gts&arama=gts&kelime={}'
 DOMAIN = 'http://tdk.org.tr'
 # Tag delimiters could be a comma or a double space characters.
 TAG_DEL = re.compile(r'\s\s+|,\s+')
@@ -30,12 +32,12 @@ logger = logging.getLogger()
 
 
 def get_tags(tag_list):
-    tags = set()
+    tags = list()
     for tag_text in tag_list:
         for tag in TAG_DEL.split(tag_text):
-            tags.add(tag.strip())
+            tags.append(tag.strip())
     # Remove empty tags (both None and empty strings are removed).
-    tags = filter(None, tags)
+    tags = list(filter(None, tags))
     return tags
 
 
@@ -108,7 +110,7 @@ def scrape_meaning(entry_string):
     now = datetime.now().isoformat()
     entry = {
         'entry': entry_string,
-        'norm': normalize(unicode(entry_string)),
+        'norm': normalize(entry_string),
         'created': now,
         'updated': now,
         'related_entries': {

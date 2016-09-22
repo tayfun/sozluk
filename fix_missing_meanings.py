@@ -3,12 +3,19 @@ Python 3 because this is not for lambda (don't be fooled by
 __future__.print_function import below, that works in 3 too).
 """
 from __future__ import print_function
+from __future__ import unicode_literals
 from itertools import chain
 
 import boto3
 
 from encoding import normalize
 from scrapers import scrape_meaning
+
+# For Python3 compat.
+try:
+    xrange
+except NameError:
+    xrange = range
 
 
 dynamodb = boto3.resource('dynamodb')
@@ -71,10 +78,10 @@ def process_entries(entries_to_check):
             dict_b, entries_table.batch_writer(overwrite_by_pkeys=['entry']) \
             as entry_b:
         for entry in entries_to_check:
-            print('Processing {}'.format(entry))
+            print(u'Processing {}'.format(entry))
             meaning = scrape_meaning(entry)
             if not meaning['sources']:
-                print("ERROR: Couldn't find meaning for {}".format(entry))
+                print(u"ERROR: Couldn't find meaning for {}".format(entry))
                 continue
             dict_b.put_item(Item=meaning)
             for related_entry in chain(

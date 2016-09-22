@@ -3,21 +3,23 @@
 Provides a translation method that strips Turkish characters and replaces
 them with ASCII equivalents.
 """
+from __future__ import print_function
+from __future__ import unicode_literals
 
 
 translate_table = {
-    ord(u"ğ"): u"g",
-    ord(u"ü"): u"u",
-    ord(u"ş"): u"s",
-    ord(u"ı"): u"i",
-    ord(u"ö"): u"o",
-    ord(u"ç"): u"c",
-    ord(u"Ğ"): u"G",
-    ord(u"Ü"): u"U",
-    ord(u"Ş"): u"S",
-    ord(u"İ"): u"I",
-    ord(u"Ö"): u"O",
-    ord(u"Ç"): u"C",
+    ord("ğ"): "g",
+    ord("ü"): "u",
+    ord("ş"): "s",
+    ord("ı"): "i",
+    ord("ö"): "o",
+    ord("ç"): "c",
+    ord("Ğ"): "G",
+    ord("Ü"): "U",
+    ord("Ş"): "S",
+    ord("İ"): "I",
+    ord("Ö"): "O",
+    ord("Ç"): "C",
 }
 
 
