@@ -56,7 +56,7 @@ def get_url(url):
     return page_content
 
 
-def get_meaning_page(entry):
+def get_meaning_page(entry, use_cache=False):
     """
     Return the meaning page for an entry.
 
@@ -83,7 +83,8 @@ def get_meaning_page(entry):
     page_from_cache = get_meaning_page.__cache__.get(entry)
     if page_from_cache is None:
         page_from_cache = get_url(DICTIONARY_URL.format(entry))
-        get_meaning_page.__cache__[entry] = page_from_cache
+        if use_cache:
+            get_meaning_page.__cache__[entry] = page_from_cache
     return page_from_cache
 
 
