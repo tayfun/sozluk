@@ -42,20 +42,20 @@ def main():
             item_chunk = items[chunk_start:chunk_start+100]
             entries_in_entries = set(item['entry'] for item in item_chunk)
             add_norm_fields(item_chunk)
-            response = dynamodb.batch_get_item(
-                RequestItems={
-                    'dictionary': {
-                        'Keys': item_chunk,
-                        'AttributesToGet': ['entry', 'sources'],
-                    }
+            request_items = {
+                'dictionary': {
+                    'Keys': item_chunk,
+                    'AttributesToGet': ['entry', 'sources'],
                 }
-            )
-            assert not response['UnprocessedKeys'], "Should've processed all."
+            }
             entries_in_dictionary = set()
-            for item in response['Responses']['dictionary']:
-                if not item['sources']:
-                    continue
-                entries_in_dictionary.add(item['entry'])
+            while request_items:
+                response = dynamodb.batch_get_item(RequestItems=request_items)
+                request_items = response['UnprocessedKeys']
+                for item in response['Responses']['dictionary']:
+                    if not item['sources']:
+                        continue
+                    entries_in_dictionary.add(item['entry'])
             entries_to_check = entries_to_check.union(
                 entries_in_entries.difference(entries_in_dictionary)
             )
