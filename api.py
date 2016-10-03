@@ -17,7 +17,9 @@ def get_meaning(event, context):
     norm = normalize(entry_query)
     response = dict_table.query(KeyConditionExpression=Key('norm').eq(norm))
     items = response.get('Items', [])
-    return json.dumps(items)
+    if not items:
+        raise ValueError('404')
+    return items
 
 
 # Inlined here so all code is in a single file.
