@@ -26,6 +26,7 @@ entries_table = dynamodb.Table('entries')
 def main():
     entries_to_check = set()
     LastEvaluatedKey = None
+    print('Starting...')
     while(True):
         scan_kwargs = {}
         if LastEvaluatedKey:
@@ -33,10 +34,11 @@ def main():
         response = entries_table.scan(
             **scan_kwargs
         )
+        print('Scanned entries.')
         items = response['Items']
         if not items:
             break
-        LastEvaluatedKey = response['LastEvaluatedKey']
+        LastEvaluatedKey = response.get('LastEvaluatedKey')
         # We can only request items by 100 chunks in batch_get_item.
         for chunk_start in xrange(0, len(items), 100):
             item_chunk = items[chunk_start:chunk_start+100]
@@ -51,6 +53,7 @@ def main():
             entries_in_dictionary = set()
             while request_items:
                 response = dynamodb.batch_get_item(RequestItems=request_items)
+                print('Scanned dictionary.')
                 request_items = response['UnprocessedKeys']
                 for item in response['Responses']['dictionary']:
                     if not item['sources']:
@@ -61,6 +64,7 @@ def main():
             )
             if len(entries_to_check) > 25:
                 process_entries(entries_to_check)
+            print('Going for next dictionary scan.')
         # We've reached the end of the table.
         if not LastEvaluatedKey:
             break
