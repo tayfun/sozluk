@@ -65,3 +65,14 @@ boto3/
 main.zip
 # requests library to be packaged for AWS Lambda execution environment.
 requests/
+
+# dependencies
+node_modules
+
+# production
+build
+
+# misc
+.DS_Store
+.env
+npm-debug.log
