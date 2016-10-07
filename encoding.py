@@ -8,24 +8,27 @@ from __future__ import unicode_literals
 
 
 translate_table = {
-    ord("ğ"): "g",
-    ord("ü"): "u",
-    ord("ş"): "s",
-    ord("ı"): "i",
-    ord("ö"): "o",
-    ord("ç"): "c",
-    ord("Ğ"): "G",
-    ord("Ü"): "U",
-    ord("Ş"): "S",
-    ord("İ"): "I",
-    ord("Ö"): "O",
-    ord("Ç"): "C",
-    ord("î"): "i",
-    ord("Î"): "i",
     ord("â"): "a",
     ord("Â"): "a",
+    ord("ç"): "c",
+    ord("Ç"): "C",
+    ord("ğ"): "g",
+    ord("Ğ"): "g",
+    ord("ı"): "i",
+    ord("I"): "i",
+    ord("î"): "i",
+    # buyuk i harfi.
+    ord("İ"): "i",
+    # sapkali I
+    ord("Î"): "i",
+    ord("ş"): "s",
+    ord("Ş"): "s",
+    ord("ö"): "o",
+    ord("Ö"): "o",
     ord("û"): "u",
     ord("Û"): "u",
+    ord("ü"): "u",
+    ord("Ü"): "u",
 }
 
 
