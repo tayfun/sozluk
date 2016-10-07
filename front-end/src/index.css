@@ -53,7 +53,7 @@ body {
   }
 }
 
-button {
+header button {
   width: 100%;
   margin-top: 1em;
 }
@@ -126,6 +126,7 @@ input {
 .EntryKeyword {
   font-size: 200%;    
   letter-spacing: 0.1em;
+  border-bottom: 1px solid #ccc;
 }
 
 .SourceTags {

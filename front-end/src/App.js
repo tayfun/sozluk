@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Navbar, Jumbotron, Button, FormGroup, FormControl, Form, ControlLabel, Modal } from 'react-bootstrap';
+import { Navbar, Button, FormGroup, FormControl, Form, ControlLabel, Modal } from 'react-bootstrap';
 import $ from 'jquery'
 
 var API_URL = "https://l2eccf6n1c.execute-api.eu-west-1.amazonaws.com/prod"
