@@ -91,6 +91,22 @@ class SearchBar extends Component {
 
 class Definition extends Component {
   render() {
+    var blockquote = ''
+    var footer = ''
+    if (this.props.definition.example.author) {
+      footer = <footer className="Author blockquote-footer">
+                  {this.props.definition.example.author}
+               </footer>
+    }
+    if (this.props.definition.example.sentence) {
+      blockquote = <div><blockquote className="Example">
+                    <p className="Sentence">
+                      {this.props.definition.example.sentence}
+                    </p>
+                    {footer}
+      </blockquote>
+      </div>
+    }
     return (
       <li className="Definition">
         <div className="DefinitionTags">
@@ -101,14 +117,7 @@ class Definition extends Component {
         <div className="Meaning">
           {this.props.definition.meaning}
         </div>
-        <div className="Example">
-          <div className="Sentence">
-            {this.props.definition.example.sentence}
-          </div>
-          <div className="Author">
-            {this.props.definition.example.author}
-          </div>
-        </div>
+        {blockquote}
       </li>
     );
   }
