@@ -45,3 +45,12 @@ Ilk tetigi baslatmak icin kelime listelerinin ilk sayfalarini `urls` tablosuna y
     for letter in {a,b,c,ç,d,e,f,g,ğ,h,ı,i,j,k,l,m,n,o,ö,p,r,s,ş,t,u,ü,v,y,z}; do aws dynamodb  --profile my-aws-profile --region eu-west-1 put-item --table-name urls --item "{\"url\": {\"S\": \"http://tdk.org.tr/index.php?option=com_yazimkilavuzu&arama=kelime&kelime=$letter&kategori=yazim_listeli&ayn=bas\"}}" --return-consumed-capacity TOTAL ; done
 
 
+Onyuz
+-----
+
+React ve baska birkac kutuphane gereklilikler arasinda. Calistirmak icin::
+
+    cd front-end
+    npm install
+    npm start
+
