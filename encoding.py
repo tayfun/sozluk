@@ -20,6 +20,12 @@ translate_table = {
     ord("İ"): "I",
     ord("Ö"): "O",
     ord("Ç"): "C",
+    ord("î"): "i",
+    ord("Î"): "i",
+    ord("â"): "a",
+    ord("Â"): "a",
+    ord("û"): "u",
+    ord("Û"): "u",
 }
 
 

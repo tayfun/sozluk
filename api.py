@@ -24,18 +24,24 @@ def get_meaning(event, context):
 
 # Inlined here so all code is in a single file.
 translate_table = {
-    ord(u"ğ"): u"g",
-    ord(u"ü"): u"u",
-    ord(u"ş"): u"s",
-    ord(u"ı"): u"i",
-    ord(u"ö"): u"o",
-    ord(u"ç"): u"c",
-    ord(u"Ğ"): u"G",
-    ord(u"Ü"): u"U",
-    ord(u"Ş"): u"S",
-    ord(u"İ"): u"I",
-    ord(u"Ö"): u"O",
-    ord(u"Ç"): u"C",
+    ord("ğ"): "g",
+    ord("ü"): "u",
+    ord("ş"): "s",
+    ord("ı"): "i",
+    ord("ö"): "o",
+    ord("ç"): "c",
+    ord("Ğ"): "G",
+    ord("Ü"): "U",
+    ord("Ş"): "S",
+    ord("İ"): "I",
+    ord("Ö"): "O",
+    ord("Ç"): "C",
+    ord("î"): "i",
+    ord("Î"): "i",
+    ord("â"): "a",
+    ord("Â"): "a",
+    ord("û"): "u",
+    ord("Û"): "u",
 }
 
 
