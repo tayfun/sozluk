@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './App.css';
 import { Navbar, Jumbotron, Button, FormGroup, FormControl, Form, ControlLabel, Modal } from 'react-bootstrap';
 import $ from 'jquery'
 
@@ -94,7 +93,7 @@ class Definition extends Component {
   render() {
     return (
       <li className="Definition">
-        <div className="Definition.Tags">
+        <div className="DefinitionTags">
           {
             this.props.definition.tags.join(', ')
           }
@@ -119,7 +118,7 @@ class Definition extends Component {
 class Definitions extends Component {
   render() {
     return (
-      <ol className="Definitions">
+      <ol className="Definitions col-sm-8">
       {
         this.props.definitions.map(function(definition, i){
           return <Definition key={i} definition={definition} />;
@@ -134,12 +133,12 @@ class Definitions extends Component {
 class Source extends Component {
   render() {
     return (
-      <div className="Source">
-        <div className="EntryHeader">
-          <div className="Entry.Entry">
+      <div className="Source row">
+        <div className="EntryHeader col-sm-4">
+          <div className="EntryKeyword">
             {this.props.entry}
           </div>
-          <div className="Source.Tags">
+          <div className="SourceTags">
             {
               this.props.source.tags.join(', ')
             }
@@ -277,10 +276,8 @@ class App extends Component {
   render() {
     let modalClose = () => this.setState({show_modal: false});
     return (
-      <div>
-        <Jumbotron className="App">
-          <SearchBar getEntryList={this.getEntryList} />
-        </Jumbotron>
+      <div className="App">
+        <SearchBar getEntryList={this.getEntryList} />
         <EntryList entry_list={this.state.entry_list} />
         <MessageModal
           show={this.state.show_modal}

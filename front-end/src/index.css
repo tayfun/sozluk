@@ -48,31 +48,25 @@ body {
   margin: 30px 0;
 }
 
-/* Main marketing message and sign up button */
-.jumbotron {
+input {
   text-align: center;
-  border-bottom: 1px solid #e5e5e5;
-  background-color: #fff;
-}
-.jumbotron .btn {
   width: 100%;
-  margin-top: 1em;
-}
-
-.jumbotron input {
-  text-align: center;
 }
 
 @media (min-width: 768px) {
   .navbar-form .btn {
       display: inline-block;
-      width: auto;
+      width: 9em;
       vertical-align: middle;
       margin: 0px;
   }
 
   #root {
     margin: auto;
+  }
+
+  input {
+    width: 20em;
   }
 }
 
@@ -108,4 +102,60 @@ body {
   background-image: none;
   box-shadow: none;
   border: 0px;
+}
+
+.EntryHeader {
+  text-align: right;
+  padding: 2em 2em 0 0;
+}
+
+.EntryKeyword {
+  font-size: 200%;    
+  letter-spacing: 0.1em;
+}
+
+.SourceTags {
+  font-style: italic;
+  color: #888;
+}
+
+.Definitions {
+  list-style-position: inside;
+  padding-left: 2em;
+}
+
+.Definition {
+  margin: 2em 0;
+}
+
+.Definition > div {
+  padding-left: 2em;
+}
+
+.DefinitionTags {
+  color: #888;
+}
+
+header {
+  margin: 2em 0;
+  text-align: center;
+}
+
+ol.Definitions {
+}
+
+ol li {
+    list-style-type: none;
+    counter-increment: list;
+    position: relative;
+}
+
+ol li:before {
+    content: counter(list) ".";
+    position: absolute;
+    /* left: -2.5em; */
+    /* width: 2em; */
+    text-align: right;
+    color: #888;
+    font-size: 200%;
 }
