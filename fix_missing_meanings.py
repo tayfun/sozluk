@@ -27,7 +27,7 @@ def main():
     entries_to_check = set()
     LastEvaluatedKey = None
     print('Starting...')
-    while(True):
+    while True:
         scan_kwargs = {}
         if LastEvaluatedKey:
             scan_kwargs['ExclusiveStartKey'] = LastEvaluatedKey
