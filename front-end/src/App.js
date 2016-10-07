@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Navbar, Jumbotron, Button, FormGroup, FormControl, Form, ControlLabel } from 'react-bootstrap';
+import { Navbar, Jumbotron, Button, FormGroup, FormControl, Form, ControlLabel, Modal } from 'react-bootstrap';
 import $ from 'jquery'
 
 var API_URL = "https://l2eccf6n1c.execute-api.eu-west-1.amazonaws.com/prod"
@@ -193,11 +193,35 @@ class EntryList extends Component {
 }
 
 
+class MessageModal extends Component {
+  render() {
+    return (
+      <Modal show={this.props.show} bsSize="small" aria-labelledby="contained-modal-title-sm" onHide={this.props.onHide}>
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-sm">{this.props.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {this.props.text}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={this.props.onHide}>Kapat</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+}
+
+
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      entry_list: sozluk
+      entry_list: sozluk,
+      show_modal: false,
+      message: {
+        title: 'Hata',
+        text: 'Hata',
+      }
     };
     this.getEntryList = this.getEntryList.bind(this);
     if (props.entry) {
@@ -229,18 +253,40 @@ class App extends Component {
         this.setState({entry_list: entry_list})
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error(status, err.toString());
-      }
+        if (xhr.status === 404) {
+          this.setState({
+            show_modal: true,
+            message: {
+              title: 'Kelime bulunamadı',
+              text: <h5><b>{entry}</b> kelimesi veritabanında bulunamadı.</h5>,
+            }
+          })
+        } else {
+          this.setState({
+            show_modal: true,
+            message: {
+              title: status,
+              text: <h5>{err.toString()}</h5>,
+            }
+          })
+        }
+      }.bind(this)
     });
   }
 
   render() {
+    let modalClose = () => this.setState({show_modal: false});
     return (
       <div>
-      <Jumbotron className="App">
-        <SearchBar getEntryList={this.getEntryList} />
-      </Jumbotron>
-      <EntryList entry_list={this.state.entry_list} />
+        <Jumbotron className="App">
+          <SearchBar getEntryList={this.getEntryList} />
+        </Jumbotron>
+        <EntryList entry_list={this.state.entry_list} />
+        <MessageModal
+          show={this.state.show_modal}
+          title={this.state.message.title}
+          text={this.state.message.text}
+          onHide={modalClose} />
       </div>
     );
   }
