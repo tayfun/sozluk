@@ -76,3 +76,5 @@ build
 .DS_Store
 .env
 npm-debug.log
+# because gh-pages branch doesn't need this.
+front-end
