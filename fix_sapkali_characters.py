@@ -51,6 +51,8 @@ def main():
                 whole_item['norm'] = new_norm
                 dict_table.delete_item(Key=item)
                 dict_table.put_item(Item=whole_item)
+        if not LastEvaluatedKey:
+            break
 
 if __name__ == '__main__':
     main()
