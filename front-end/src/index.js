@@ -7,7 +7,7 @@ import './index.css';
 
 function handleNewHash() {
   var location = window.location.hash.replace(/^#\/?|\/$/g, '').split('/');
-  var entry = location[0]
+  var entry = decodeURIComponent(location[0])
   ReactDOM.render(
       <App entry={entry} />,
       document.getElementById('root')

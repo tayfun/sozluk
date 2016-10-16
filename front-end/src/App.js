@@ -154,7 +154,7 @@ class Source extends Component {
           </div>
         </div>
         <Definitions definitions={this.props.source.definitions} />
-      </div>   
+      </div>
     );
   }
 }
@@ -169,7 +169,7 @@ class Sources extends Component {
             return <Source key={i} entry={this.props.entry} source={source} />;
           }, this)
         }
-      </div>  
+      </div>
     );
   }
 }
@@ -238,7 +238,7 @@ class App extends Component {
   }
 
   getEntryList(entry) {
-    window.location.hash = '#' + entry;
+    window.location.hash = '#' + encodeURIComponent(entry);
     $.ajax({
       url: API_URL,
       dataType: "json",
