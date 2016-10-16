@@ -5,15 +5,24 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import './index.css';
 
-function handleNewHash() {
+var react_obj = null;
+
+
+function handlePage(event) {
   var location = window.location.hash.replace(/^#\/?|\/$/g, '').split('/');
-  var entry = decodeURIComponent(location[0])
-  ReactDOM.render(
-      <App entry={entry} />,
-      document.getElementById('root')
-  );
+  var entry = decodeURIComponent(location[0]);
+  if (!react_obj) {
+    react_obj = ReactDOM.render(
+        <App />,
+        document.getElementById('root')
+    );
+  }
+  if (entry) {
+    // FIXME: Put loading spinner here.
+    react_obj.getEntryList(entry);
+  }
 }
 
 // Handle the initial route and browser navigation events
-handleNewHash()
-window.addEventListener('hashchange', handleNewHash, false);
+handlePage()
+window.addEventListener('popstate', handlePage, false);

@@ -49,11 +49,16 @@ class SearchBar extends Component {
     // bind this. React.createClass apparently does this automatically.
     this.entryChange = this.entryChange.bind(this);
     this.formSubmit = this.formSubmit.bind(this);
+    this.state = {
+      entry: this.props.entry
+    }
   }
 
   formSubmit(e) {
     e.preventDefault();
-    this.props.getEntryList(this.state.entry);
+    var entry = this.state.entry;
+    history.pushState({entry: entry}, entry + " anlami", '/sozluk/#' + encodeURIComponent(entry))
+    this.props.getEntryList(entry);
   }
 
   entryChange(e) {
@@ -73,6 +78,7 @@ class SearchBar extends Component {
                 <FormControl
                   name="entry"
                   onChange={this.entryChange}
+                  value={this.state.entry}
                   placeholder="sozluk">
                 </FormControl>
                 {'  '}
@@ -224,6 +230,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      entry: '',
       entry_list: sozluk,
       show_modal: false,
       message: {
@@ -232,13 +239,16 @@ class App extends Component {
       }
     };
     this.getEntryList = this.getEntryList.bind(this);
-    if (props.entry) {
-      this.getEntryList(props.entry);
-    }
   }
 
   getEntryList(entry) {
-    window.location.hash = '#' + encodeURIComponent(entry);
+    // push new state.
+    // window.location.hash = '#' + encodeURIComponent(entry);
+    if (!entry) {
+      entry = this.state.entry;
+    } else {
+      this.setState({entry: entry});
+    }
     $.ajax({
       url: API_URL,
       dataType: "json",
@@ -286,7 +296,7 @@ class App extends Component {
     let modalClose = () => this.setState({show_modal: false});
     return (
       <div className="App">
-        <SearchBar getEntryList={this.getEntryList} />
+        <SearchBar getEntryList={this.getEntryList} entry={this.state.entry} />
         <EntryList entry_list={this.state.entry_list} />
         <MessageModal
           show={this.state.show_modal}
