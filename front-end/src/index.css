@@ -116,6 +116,7 @@ input {
   background-image: none;
   box-shadow: none;
   border: 0px;
+  border-bottom: 0.5em solid #eee;
 }
 
 .EntryHeader {
@@ -179,4 +180,14 @@ ol li:before {
   font-size: inherit;
   color: #888;
   margin-top: 1em;
+}
+
+.ExtraInfoTitle {
+  text-align: right;
+  margin-bottom: 1em;
+}
+
+.ExtraInfo a {
+  margin-right: 1em;
+  text-decoration: underline;
 }

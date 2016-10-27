@@ -184,11 +184,37 @@ class Sources extends Component {
 }
 
 
+class ExtraInfo extends Component {
+  render() {
+    if (!this.props.entries.length) {
+      return null;
+    }
+    this.props.entries.sort();
+    return (
+      <div className="ExtraInfo">
+        <div className="col-sm-4 ExtraInfoTitle">{this.props.title}</div>
+        <div className="col-sm-8">
+          <div className={this.props.name}>
+          {
+            this.props.entries.map(function(entry, i) {
+              return <a key={i} href={"/sozluk/#" + encodeURIComponent(entry)}>{entry}</a>;
+            }, this)
+          }
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+
 class Entry extends Component {
   render() {
     return (
       <div className="Entry">
         <Sources sources={this.props.entry.sources} entry={this.props.entry.entry} />
+        <ExtraInfo name="idioms" entries={this.props.entry.related_entries.idioms} title="Deyimler" />
+        <ExtraInfo name="compound_entries" entries={this.props.entry.related_entries.compound_entries} title="Birleşik Kelimeler" />
       </div>
     );
   }
