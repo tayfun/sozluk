@@ -76,7 +76,10 @@ class SearchBar extends Component {
                   Kelime
                 </ControlLabel>
                 <FormControl
+                  type="text"
                   name="entry"
+                  required={true}
+                  autoCapitalize="none"
                   onChange={this.entryChange}
                   value={this.state.entry}
                   placeholder="sozluk">
