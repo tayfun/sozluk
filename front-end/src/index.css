@@ -234,3 +234,7 @@ ol li:before {
   color: #000;
   margin-left: -1em;
 }
+
+#loading {
+  display: none;
+}
