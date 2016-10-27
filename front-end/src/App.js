@@ -272,12 +272,12 @@ class App extends Component {
 
   getEntryList(entry) {
     // push new state.
-    // window.location.hash = '#' + encodeURIComponent(entry);
     if (!entry) {
       entry = this.state.entry;
     } else {
       this.setState({entry: entry});
     }
+    $("#loading").show();
     $.ajax({
       url: API_URL,
       dataType: "json",
@@ -297,7 +297,8 @@ class App extends Component {
           }
           return 0;
         });
-        this.setState({entry_list: entry_list})
+        this.setState({entry_list: entry_list});
+        $("#loading").hide();
       }.bind(this),
       error: function(xhr, status, err) {
         if (xhr.status === 404) {
@@ -317,6 +318,7 @@ class App extends Component {
             }
           })
         }
+        $("#loading").hide();
       }.bind(this)
     });
   }

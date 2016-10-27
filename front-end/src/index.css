@@ -121,7 +121,7 @@ input {
 
 .EntryHeader {
   text-align: right;
-  padding: 2em 2em 0 0;
+  padding: 2em 2em 2em 0;
 }
 
 .EntryKeyword {
@@ -184,10 +184,53 @@ ol li:before {
 
 .ExtraInfoTitle {
   text-align: right;
-  margin-bottom: 1em;
+}
+
+.ExtraInfo {
+  margin-bottom: 0.5em;
 }
 
 .ExtraInfo a {
   margin-right: 1em;
   text-decoration: underline;
+}
+
+.glyphicon.loading {
+  animation: spin 1s infinite linear;
+  -webkit-animation: spin2 1s infinite linear;
+}
+
+@keyframes spin {
+  from { transform: scale(1) rotate(0deg); }
+  to { transform: scale(1) rotate(360deg); }
+}
+
+@-webkit-keyframes spin2 {
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
+}
+
+#overlay {
+  background: #ffffff;
+  color: #000;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 5000;
+  top: 0;
+  left: 0;
+  float: left;
+  text-align: center;
+  padding-top: 15%;
+  opacity: 0.5;
+  font-size: 3em;
+}
+
+#loading span {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  font-size: 3em;
+  color: #000;
+  margin-left: -1em;
 }

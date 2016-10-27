@@ -18,7 +18,6 @@ function handlePage(event) {
     );
   }
   if (entry) {
-    // FIXME: Put loading spinner here.
     react_obj.getEntryList(entry);
   }
 }
